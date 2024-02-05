@@ -1,13 +1,20 @@
 package com.grayHat.demo.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -30,6 +37,11 @@ public class User implements Serializable {
 	@Column(nullable=false)
 	private String phone;
 	
+	
+	@OneToMany(mappedBy = "client")
+	@JsonManagedReference
+	private List<Order> orders = new ArrayList<>();
+	
 	public User() {
 	}
 
@@ -40,7 +52,7 @@ public class User implements Serializable {
 		this.phone = phone;
 	}
 	
-	
+
 	public UUID getId() {
 		return id;
 	}
@@ -73,6 +85,10 @@ public class User implements Serializable {
 		this.phone = phone;
 	}
 
+	public List<Order> getOrders() {
+		return orders;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -1,6 +1,8 @@
 package com.grayHat.demo.service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,5 +22,11 @@ public class UserService {
 	
 	public List<User> findAll(){
 		return userRepository.findAll();
+	}
+	
+	public User findById(UUID id) {
+		Optional<User> obj = userRepository.findById(id);
+		return obj.get();
+		
 	}
 }

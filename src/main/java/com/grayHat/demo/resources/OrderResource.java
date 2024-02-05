@@ -14,33 +14,33 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.grayHat.demo.entities.User;
-import com.grayHat.demo.service.UserService;
+import com.grayHat.demo.entities.Order;
+import com.grayHat.demo.service.OrderService;
 
 @RestController
 @Component
-@RequestMapping(value = "/users")
-public class UserResource {
+@RequestMapping(value = "/orders")
+public class OrderResource {
 	
 	@Autowired
-	private UserService service;
+	private OrderService service;
 	
 	
 	@PostMapping
-	public  ResponseEntity<User> insert(@RequestBody User obj){
+	public  ResponseEntity<Order> insert(@RequestBody Order obj){
 		obj = service.insert(obj);
 		return  ResponseEntity.ok().body(obj);
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<User>> findAll() {
-		List<User>  list = service.findAll();
+	public ResponseEntity<List<Order>> findAll() {
+		List<Order>  list = service.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<User>findById(@PathVariable UUID id) {
-		User obj = service.findById(id);
+	public ResponseEntity<Order>findById(@PathVariable UUID id) {
+		Order obj = service.findById(id);
 		return ResponseEntity.ok().body(obj);
 		
 	}
