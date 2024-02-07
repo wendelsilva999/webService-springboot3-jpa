@@ -1,0 +1,578 @@
+          
+          
+          Entities (ou Models):
+
+	Propósito: Nesta camada, você define as classes que representam a estrutura de dados da sua aplicação. Isso pode incluir classes de entidades que mapeiam diretamente para tabelas no banco de dados, caso você esteja usando um sistema de persistência de dados como o Hibernate.
+	Responsabilidade: Define como os dados são estruturados e organizados.
+	
+	Repository (Opcional):
+	Propósito: Se você estiver usando um banco de dados, é comum ter uma camada de repositório. Nesta camada, você lida com operações de banco de dados, como salvar, recuperar, atualizar e excluir dados.
+	Responsabilidade: Lida com a persistência e recuperação de dados.
+	
+
+	Service:
+	Propósito: Camada de serviço contém a lógica de negócios da aplicação. Ela coordena as operações entre os controladores (resource) e os repositórios (se estiverem presentes).
+	Responsabilidade: Implementa a lógica de negócios, valida dados, realiza operações complexas e pode orquestrar chamadas a repositórios.
+	
+	Resource (ou Controller):
+	Propósito: Esta camada expõe seus recursos através de uma API. Aqui, você lida com solicitações HTTP, chama os serviços subjacentes e retorna respostas adequadas.
+	Responsabilidade: Recebe requisições do cliente, chama os serviços necessários, transforma dados se necessário e envia respostas HTTP adequadas.
+	
+
+	DTO (Data Transfer Object):
+	Propósito: Às vezes, é útil ter objetos específicos para transferência de dados entre o cliente e o servidor. Esses objetos, conhecidos como DTOs, podem ser usados para enviar dados específicos para a interface do usuário sem incluir informações sensíveis ou desnecessárias.
+	Responsabilidade: Transferir dados entre camadas, geralmente para evitar a exposição de detalhes internos.
+          
+          
+          APPLICATION 
+              |
+              V
+          RESOURCE LAYER
+          (rest controllers)
+              |
+              V
+           SERVICE LAYER                            ENTITIES
+              |
+              V
+          DATA ACCESS LAYER                         ENTITIES
+          (data repositories)
+          
+
+	entitie
+	onde eu estruturo meus dados(que criam as tabelas neste caso)
+	
+	resource 
+	funciona como o controller do mvc aqui eu recebo a requisição e chamo o service que atende aquela requisição
+	
+	service
+	camada que contem a logica de negocio da aplicação ela controla a as operações entre resoucer(controller) e os repositorios
+
+	repository
+	nesta camada lidamos com o banco de dados com operações como salvar, recuperar, atualizar e deletar dados           
+
+	DTO 
+	não usei nessa aplicação
+
+
+          
+          para o inicio desse projeto vamos criar a primeira entidade
+          chamada user
+          e o resource 
+
+	  É porque entites user e resoucer user?
+
+           No contexto do Spring Boot, a estrutura de pacotes geralmente segue uma arquitetura em camadas para organizar melhor o código e separar 
+     	   as responsabilidades. As duas pastas que você mencionou, entities e resource, geralmente desempenham papéis específicos:
+
+		entities (ou models, domain, etc.):
+
+		Propósito: Esta pasta normalmente contém as classes que representam os modelos de dados da sua aplicação, frequentemente referidas como entidades.
+		Cada classe nesta pasta geralmente corresponde a uma tabela no banco de dados, se você estiver usando persistência de dados.
+		Exemplo: Se sua aplicação lida com usuários, você pode ter uma classe User nesta pasta que representa a estrutura de dados de um usuário.
+		resource (ou controllers, api, etc.):
+
+		Propósito: Esta pasta geralmente contém as classes que lidam com a exposição de seus recursos através de uma API RESTful. São os controladores que tratam as solicitações HTTP,
+		chamam os serviços subjacentes e retornam as respostas adequadas.
+		Exemplo: Se você estiver construindo um serviço de usuários, você pode ter um controlador chamado UserController nesta pasta que lida com as solicitações relacionadas 
+		aos usuários, como criar, recuperar, atualizar ou excluir.
+		A ideia é separar as preocupações em camadas distintas. As classes em entities cuidam da representação dos dados, enquanto as classes em resource cuidam da interação com 
+		esses dados através de uma API ou interface de usuário.	  
+
+
+
+
+      
+          
+          no pdf do curso tem um checklist pra criarmos uma entidade da melhor forma
+          vamos criar a class User no packege principal o com.grayHat.demo.entities
+          
+          
+          o check list e esse
+          - basic attributes
+	  - Serializable
+          - associations(instantiate collections)
+          - constructors 
+          - getters and setters (collections: only get)
+          - hashCode and equals
+          
+          
+
+	criei a entidade e agora e só seguir o passo a passo
+
+        basic atributos:
+	 são os campos basico name, id, email e etc aqui tmb eu uso anotações para configurações pra esses campos
+	como definir quem e a chave primaria ou se um campo não pode ser nulo
+	as anotations são coisa do springboot
+
+	e porque estamos usando framework e obrigado usar construtor vazio
+	e tmb um que recebe todos os parametros  
+	  
+        o resto e padrãao source generator e tal e tal
+
+	
+	Serializable:
+	A interface Serializable em Java é uma marcação de interface que indica que a classe que a implementa pode ser serializada. A serialização é o processo de converter um objeto em uma sequência de bytes, que pode ser posteriormente revertida para recriar o objeto original. Essa sequência de bytes pode ser usada para salvar o estado do objeto em um arquivo, enviar pela rede ou armazenar em um banco de dados.
+	Ao implementar a interface Serializable em uma classe, você está indicando que os objetos dessa classe podem ser transformados em uma forma que pode ser facilmente transmitida ou armazenada. No contexto do Spring Boot, isso é frequentemente usado quando você está trabalhando com persistência de dados, especialmente ao armazenar objetos em bancos de dados.
+
+
+          
+        criamos a seguir o UserResource nossa classe no package Resources
+	cama responsavel pelo recebimento das resquest pros dados do usuario 
+          
+          
+        beleza pra gente falar que o UserResource e um recurso web que e implementado por um controlador rest
+        nos usamos uma anotation emcima da classe fica assim 
+        @RestController
+        @RequestMapping(value = "/users") o caminho onde ele vai ser chamado
+	public class UserResource {
+
+	}
+	
+	esse value seria a rota onde chamamos esse recurso especifico onde fazemos essa requisição
+
+
+          
+        e agora criamos um endpoint pra acessara os usuarios isso e tipo o nome do metodo pra chamar os user do banco
+        criamos um metodo public do tipo ResponseEntity<T> que e um tipo especifico do spring pra retornar respostas de requisições web
+        que e um genericos e nas chaves vamos colocar User a nossa class ficando ResponseEntity<User> findAll como nome do metodo
+          
+        como e so teste vamos retornaar um dado falso assim  
+
+        return ResponseEntity.ok().body(u); o .ok e pra retornar a resposta com sucesso
+        eo .body e pra retornar no corpo da repostas o usuario que criei 
+          
+          eo método pra indicar que ele e metodo que responde a requisição get vamos usar o Getmapping
+          fica assim
+              @GetMapping
+	      public ResponseEntity<User> findAll() {
+			User u = new User(1L, "bob lee", "swgee.com", "99999", "1234");
+			return ResponseEntity.ok().body(u);
+		  }
+
+
+          como eu disse deu certo chamei o localhost:8080/users e me retornou esses dados
+          
+          
+
+
+
+	agora eu vou popular o banco usando o post que achei melhor assim
+	então em service eu chamei o repositorio do user e fiz o metodo para salvar no banco
+	e em resource irei fazer o metodo que recebe o json e chama o service
+	
+
+
+
+
+
+
+
+          
+          
+                              H2 BANCO DE TESTES
+          agora vamos configurar o h2 um banco de dados mt usado em java para testes
+          ele e um banco in memoria portanto não e preciso instalar nada já vem integraado ao projeto
+          
+          vamos criar um profile de teste um perfil especifico só pra fazer testes
+          tmb da pra faazer outros perfis como de dev pra não reiniciar toda vez que o projeto roda
+          produção que e quando o projeto está implatando no client que vai usar o sistema
+          
+          checklist
+          - JPA & H2 dependencies
+          - application.properties
+          - application-test.properties
+          - entity: JPA mapping
+          - repository
+          
+          as dependencias colocamos la no pom.xml
+          do jpa e do h2 tem no pdf do curso
+          
+          o application.properties ja vem criado ele ta no src/main/resources
+          vamos configurar o nome do perfil como test
+          spring.profiles.active=test
+          
+          e tamb uma config pro jpa
+          spring.jpa.open-in-view=true (depois ver como tudo isso funciona)
+          
+          
+          e agora vamos criar um arquivo chamado application-test.properties na mesma pasta do apllication.properties
+          e vai ser aqui onde teremos as configurações do nosso banco de dados h2 no material de apoio o pdf peguemos o seguinte codigo e colemos nesse file
+          
+          # DATASOURCE
+		  spring.datasource.driverClassName=org.h2.Driver
+		  spring.datasource.url=jdbc:h2:mem:testdb     string de conexão com o banco de daados chamado testdb mem e de memoria
+		  spring.datasource.username=sa                nome do user sa
+		  spring.datasource.password=
+		  # H2 CLIENT
+		  spring.h2.console.enabled=true
+		  spring.h2.console.path=/h2-console           caminho pra acessar o admin do h2 no navegador eo /h2-console
+		  # JPA, SQL
+		  spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+		  spring.jpa.defer-datasource-initialization=true
+		  spring.jpa.show-sql=true                                       isso aqui serve pra mostrar no log o comando sql executado pelo jpa
+		  spring.jpa.properties.hibernate.format_sql=true                isso formata o sql pra ficar lergivel
+		  
+		  
+		  
+	agora vamos na entidade user(já que só temos ela por enquanto) fazer o mapeamento do jpa
+	vou colocar umas anotations lá pra instruir o jpa como e ele vai converte os objs pro banco 
+	de dados relacional
+		  
+	ISSO E NA ENTIDADE NÃO NO UserResource
+		  
+	chamamos o entity e o table
+	@Entity
+        @Table(name = "tb_user")
+          
+        o table e porque queremos que o nome da tabela no banco seja tb_user porque
+	só i user já e uma palavra reservada do banco h2
+          
+        beleza e após isso eu preciso dizer pro jpa qual dos atributos vai ser a chave primaria(que será o id emcima do atributo usamos o anotation @Id)
+        e para ser autoincrementada podemos usar outra anotation
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        pode ter algum banco de dados que nõ funcione assim então e melhor prestar atenção
+		  
+			          
+          
+          
+          
+          
+          
+        JPA repository, dependency injection, database seeding
+          
+          
+        JPA repository e um sub-framework do sistema spring, vamos trabalhar com injeção de dependencia automatica
+        feita pelo conteiner do framework e tmb vamos intanciar a primeira instanciação do banco de dados
+          
+          
+          
+        vamos criar a INTERFACE UserRepository que será responsavel por fazer operações com a entidade User
+          
+          checklist
+          - UserRepository extends JPARespository<User,Long>  eu passei o tipo da entidade eo tipo da chave dela
+          - configuraation class for "test" profile
+          - @Autowired UserRepository
+          - Instantiate objctes in memory
+          - persist objects
+          
+          vamos cria o userepository, num novo packge chamado repositories i ele vai ser interfaces
+          porq o jpa repository e interface 
+          
+          agora vamos configurar o perfil de test, e podemos fazer configurações especificasa pra ele
+          vamos criar uma class de configuração 
+         
+        vamos criaar a class TestConfig num novo packge config e vamos indicar pro spring q isso e uma classe 
+	expecifica de configuração vamos usar a anotação @Configuration
+        e pra indicar que e especifica do perfil de teste usamos outra anotação @Profile("Test") o mesmo nome igual 
+	ao q tiver no application.properties
+          
+          
+        agora vamos acessar o banco pra salvar coisas lá e quem acessa o banco de dados e o repository
+          
+          
+        e aqui vem a injecção de depedencia porque a class testConfig tem que ter uma dependencia 
+	com o UserRepository
+        PRA FAZERMOS UM OBJ DEPENDER DE OUTRO DEVEMOS DECLARAR ESSA DEPENDENCIA
+        por isso n class TestConfig vou criar um atributo UserRepository do mesmo tipo
+        é!! para q o spring associe essa instanco do userrepository no testconfig vaamos usar anotação
+        @Autowired emcima do atributo UserRepository
+          
+          
+          vamos instanciar uns objs em test config e pra fazer ser rodado vamos implementar na classe o CommandLineRunner
+          e ai criamos o metodo run e tudo o q tiver dentro do metodo sera iniciado quando rodar a aplicação
+          e vamos la instanciar alguns objs pra testes
+          
+          
+          
+          
+          
+        CAMADA DE SERVIÇOS
+
+	 e registro de componentes
+        service layer, component registration
+          
+        Order, Instant, ISO8601
+          
+          checklist
+          - Entity
+              "To many" association, lazy loading, JsonIgnore
+          - Repository
+          - Seed
+          - Service
+          - Resource
+          
+          
+        porque fazemos a camada de serviço e não fazemos o controlador o resource acessaar logo a camada 
+	de repository o banco?
+        não q seja proibido mas e preferido usar um camada intermendiaria de serviço pra implementar as
+	regras de negocio
+        alguma orquestração de repository como a exemplo salvar um pedido preciso ver se tem no stock 
+	e salver o item antes de coisar o pedido
+        enfim varias coisas eo controlador ficaria mt carregado com isso tudo
+          
+        tmb temos desvantagens pode ter operação que a camada de serviço so vai repasar pro repository 
+	a chamada de alguma coisa
+        e na caamada de serviço não tem nada pra isso so vamos repasar pro repository
+          
+          okay pra isso tudo vamos criaar o UserService e criando no packge services
+          vamos criar as operações buscar todos os user e buscar so por id
+          eo userservive precisa ter dependencia com o userrepository
+          
+        declaramos la a dependencia criando um atribudo  e usamos a anotação @Autowired pro spring 
+	fazer isso pra gente
+          
+        e lá no controllador o userResource nos vamos criar uma dependencia para o service e chaamar 
+	o metodo findAll que criamos no service assim o controle recebe a requisção pra buscar todos
+	chama o serviço que vai no banco pega os dados devolve pro controller que vai entregar pro requisitante
+          
+          
+        Agora o component registration
+        o que e isso?
+        assim quando temos um obj que vai poder ser injetado pelo mecanismo do spring a class do obj 
+	precisa ta registrada no mecanismo de injeção de dependencia
+          
+          nos temos o UserResource que tem uma dependencia com o UserService
+          e pra funcionar a class userservice precisa ser registraada como um component do spring
+          e para fazer isso podemos usar uma anotation 
+          @Component   la na class UserService
+          mas! existe anotações mais especifica a exemplo temnos @Repository pra registrar um repositorio
+          e temos o @service e como e isso a classe userservice vamos usar essaa anotação
+          
+          
+
+
+
+
+
+
+        AGORA VAMOS TRABALHAR COM ORDER(pedido) um pedido so pertence a um user mas 
+	um user pode ter varios pedidos, INSTANT, ISO 8601
+          
+          checklist
+          - Entity
+              "To many" association, lazy loading, jsonIgnore
+          - Repository
+          - Seed
+          - Service
+          - Resource
+          
+          vamos criar a entidade pedido(Order) primeiro em entities 
+
+
+          com atributos:
+	id 
+	moment que e do tipo instant seria o instante que o pedido foi feito
+        e agora as associações
+        um pedido tem um cliente(User)
+        em Order crio um atributo client do tipo User é para fazer uma associação muitos pra um
+
+        lá em user eu crio uma lista do tipo Order que vai receber  uma lista dos pedidos que o user(client) fez
+        private List<Order> orders = new ArrayList<>();
+        e como diz no pdf uma collection que eo caso da lista deve já ser instanciada
+          
+        e vamos usar algumas anotações como fizemos em User tanto pra criaar uma tabela no banco como tal e tal
+        e o nome order já e uma palavra reservado do sql então vamos usar a anotaçõ table pra dar um nome diferente 
+	pra tabela já que ele criaria a tabela com o nome da classe que seria Order
+          
+        e agora vamos trabalhaar no relaacionamento das tabelas pro JPA agir e termos nossas chaves estrangeiras 
+        em order eu to muitos para 1 
+        então eu uso uma anotação que mostra isso em cima do atributo do client user
+          
+        @ManyToOne
+        @JoinColumn(name= "client_Id")
+	private User client;   
+		  
+	fica assim EM ORDER
+	e usamos o join colum e ali entre parenteses () eu coloquei o nome da chave estrangeira que será criada 
+	la no banco
+          
+         
+          e lá no user vamos fazer o 1 para muitos
+          vai servir pra acessar os pedidos que o user fez
+          fica assim
+          @OneToMany(mappedBy = "client") a relação 1 para muitos sera mapeada pelo atributo client que instancie em na entity order
+	  private List<Order> orders = new ArrayList<>();
+          isso no USER 
+          
+          
+          Agora vamos falar um pouco sobre 
+          "To many" association, lazy loading(carregamento tardio), jsonIgnore
+          
+          vamos criar o repository do order
+          criei os repository e o service e resource
+          
+          e vamos fazer o seed lá em testconfig vamos mandar ja salvar alguns dados pra teste claro
+          lá em testconfig igual fizemos com user
+          
+          
+          estavamos com um erro que e o seguinte era uma asociação de mão dupla 
+          o pedido chama um user e o user chamava o pedido que chamava outro user e isso gerava um loop
+          e pra NÃO OCORRER ISSO vamos usar a anotação JsonIgnore em algum dos dois lados ou em user ou em order
+          
+          vamos por em user na lista de pedidos 
+          fica assim
+        @JsonIgnore
+	@OneToMany(mappedBy = "client")
+	private List<Order> orders = new ArrayList<>();
+          
+          
+          e agora  ao chamar o orders/1 o pedido com id 1 ele ja vem com o client que ele foi assocido
+          isso contece no muitos pra 1 
+          
+          o q não ocorre do lado 1 para muitos ele não trara os objetos associados
+          
+          pra gente receber todos os pedidos de um client 
+          
+          podemos tirar a anotçõ jsonignore de user e colocaar em order em cima do atributo client
+          ele trata o user eo pedidos feitos por ele
+          
+          
+          vamos instanciar  a entidade Product que e um muitos para 1 e 1 para muitos
+           e as aassociações 
+          um produto tem varias categories
+          crio um atributo categories em product pra criar a associação
+          sera um set pra não repeti a categoria no product
+          
+          e vamos em category fazer o mesmo porq uma categoria pode ter varios parducts
+          
+          
+          vamos pra associação muitos pra muitos com join table 1 producto pode ser de mais de uma categoria e um categoria mais de um produto
+          
+          e como fazemos isso? vamos usar o JPA e escolhemos umas das duas classes que serão associaados
+          escolhemos product 
+          usamos  um anotation emcima do atributo que liga as duas tabelas o set com as coleções de categorias
+          e tmb a anotaation join table 
+          onde vamos falar o nome da tabela e a chave estrangiera que ira associar as tabelas
+          AAH ENTENDI vou passar o nome da tabela terceira que vai ser onde faço a associação entre as tabelas
+          
+          
+          @ManyToMany    nome da tabela terceira         nome da chave estrangeira referente a classe onde está ou seja produto
+	      @JoinTable(name = "tb_product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
+	      private Set<Category> categories = new HashSet<>();                                          esse inverse e a chave da tabela category 
+	      
+	      e lá em category a tabela que estamos associando aqui fazemos o mesmo
+	      mas com algumas diferenças
+	      
+	      @JsonIgnore
+	      @ManyToMany(mappedBy = "categories")
+		  private Set<Product> products = new HashSet<>();
+	      
+	      categories e o nome do atributo lá em products que faz a ligação de product com category
+          
+          não vamos esquecer do jsonIgnore pra evitar os loops inifinitos
+          
+          
+          vamos criar a classe itens de pedidos OrderItem
+          que será muitos pra muitos com dados extras assim o produto tem quantidade
+          que o pedido solicita como exemplo 3 cell e isso a quantida não e um dado que pertence exclusivamente a product ou order
+          
+          então nos teremos uma tabela de associação com dados extras
+          a class associada tera quantidade e price(por motivo historico saber quanto foi vendida na data da venda)
+          e um metodo que calcula o total do pedido
+          
+          so que  no paradigma OOP não existe o conceito de chave primaria composta
+          o atributo indentificador e um so por isso precisamos criar uma classe auxiliar pra representar o par product e order
+          
+          checklist
+          
+          OrderItemPK  - classe auxiliar que sera a chave primaria de orderitem e essa sim terá a referencia pra pedido e produto
+          OrderItem
+          Order one-to-many association
+          Seed
+          
+          devo usa uma anotation pra sinalizar a classe como auxiliar de chaves primarias
+          o @Embeddable e outras anotação como joincollumn criando campos na tabelaa auxiliar onde faço a ligação das tabelas
+          
+          e agora criamos a class orderitem
+          
+          vamos na classe order criar uma coleção set de orderitem pra poder ver todos os items
+          
+          product ordemitens 1 para muitos
+          dado um pedido posso acessar o itens associados ao pedido mas quando tenho um produto
+          eu quero saber  a ordem q pediu ele pedi os pedidos q chamaram esses produtos
+          como vamos fazer pra pegar um produto e ver quantos pedidos tem esse produto
+          
+          vamos ter varrer o orderitem e associar o orderitem ao order aos pedidos
+          
+          
+          
+          vamos ver o payment o pagamento tem 1 necessariamente 1 pedido já um pedido tem 0 ou 1 pagamento
+          
+          
+          vamos criar em entities uma nova classe Payment
+          crio os atributos em order e pyment para os linkar e em order criei o get e set desse atributo
+          vamos em seguida fazer o mapeamento dos objetos relacionais fazemos isso colocando os anatation
+          como@Entity
+			  @Table(name = "tb_payment")
+			  
+			  vamos ver uma associação 1 para 1 e a classe dependente ea payment porq um pedido pode ter 0 dela mas um pagamento precisa de um pedido
+			  
+			  no mapeamento 1 pra na classe dependente usamos a anotção onetoone no atributo de ligaçao com a outra classe 
+			  fica assim
+			  @OneToOne
+		      @MapsId
+			  private Order order;
+			  
+			  esse mapsId não sei bem pra q serve 
+			  e la no order no atributo associado tmb colocamos onetoone e mais uma coisa e fica assim
+			  @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+	          private Payment payment;
+          	  
+          	  como pode ver ele e mapeaado pelo atributo order criado na classe depedente o mesmo acima deste
+          	  já esse cascade
+          	  não entendi maas nos estamos mapeado as duas entidade pra ter o mesmo id
+          	  se o pedido for 5 o pagamento sera 5 tmb e nesse mapeaado 1 pra 1 e obgatorio usar esse cascade tmb
+              
+              para salvarmos um obj dependente 1 para 1	não chamamos o repository do proprio obj
+              nos vamos fazer uma assocção de mão dupla em memoria
+              chamamos o pedido o order la no tesconfig onde uso pra popular o banco
+              chamo o1.setPayment(pay1) passando o pagmento
+              ai salvamos novamente o pedido ai o JPA salva o pagamento desse pedido
+              
+              
+              o metodo subtotal vamos criar no OrderItem
+              eo metodo total ficara em order
+              
+              preciso estudar mais prestar atenção nos jsons e pormenores
+              
+              e agora vamos aprender alguns metodos como inserir mais um user 
+              
+              seria o create salvar um dado user isso na no userService
+              depois vamos no userresouser pra configurar o endpoint
+              
+              
+              vamos agora fazer o delete
+              vamos mexer no service e resource
+              
+              agora o update
+              
+              
+              vamos tratar algumas exeções criando umas exceção personalizadas
+              vamos criar uma execção caso não achemos um user
+             
+          	  
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
