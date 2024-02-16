@@ -1,9 +1,11 @@
 package com.grayHat.demo.dto;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
-public class CategoryWithProductsDto {
+public class CategoryWithProductsDto implements Serializable{
+	private static final long serialVersionUID = 1L;
 	
 	private UUID id;
     private String name;
